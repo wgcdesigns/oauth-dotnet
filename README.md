@@ -44,7 +44,7 @@ This is not a seed project to be taken cart blanche and deployed to your product
 
 - Clone the GitHub repo to your workspace
 
-Note: This sample is using the sandbox environment by default. So, you need to use the development tokens of your app to run this sample. If you want to switch to production, please make sure that you change the qbo_url in app.properties file inside OauthSample folder to quickbooks.api.intuit.com from sandbox-quickbooks.api.intuit.com. Also, make sure that you configure the sample app to use prod tokens instead of development tokens.
+Note: This sample is used for understanding how oauth works
 
 - Configure the app tokens: Go to your app on developer.intuit.com and copy the OAuth Consumer Key and OAuth Consumer Token from the keys tab. Add these values to the app.properties file in our OauthSample folder.
 
@@ -60,3 +60,8 @@ Once the sample app code is on your computer, follow the steps below to run the 
 
 - After successfully connecting the app to QuickBooks.
 
+## How To Guides
+
+The following How-To guides related to implementation tasks necessary to produce a production-ready Intuit Partner Platform app (e.g. OAuth, OpenId, etc) are available:
+
+* [OAuth How To Guide](https://developer.intuit.com/blog/2015/02/19/oauth-for-intuit-demystified)
