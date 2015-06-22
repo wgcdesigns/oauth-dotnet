@@ -10,11 +10,12 @@ This sample app is meant to provide a working example of oAuth management.
 
 OAuth Management APIs consists of the following:
 
-* Intuit OAuth Service URLs - URLs to use to access Intuit OAuth Services. 
-* Request token URL - Request token endpoint to retrieve request token and secret 
-* Access token URL - Access token endpoint to retrieve access token and secret
-* Authorize URL - To authorize access to the third party app
-
+<ul>
+<li>Intuit OAuth Service URLs - URLs to use to access Intuit OAuth Services.</li>
+<li>Request token URL - Request token endpoint to retrieve request token and secret</li> 
+<li>Access token URL - Access token endpoint to retrieve access token and secret </li>
+<li>Authorize URL - To authorize access to the third party app</li>
+</ul>
 </p>
 <p>
 
