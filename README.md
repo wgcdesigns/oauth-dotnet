@@ -2,12 +2,21 @@
 =====================================
 <p>
 Welcome to the Intuit Developer's DotNet OAuth Sample App.
-
+</p>
+<p>
 This sample app is meant to provide a working example of oAuth management.
+</p>
+<p>
 
 OAuth Management APIs consists of the following:
 
-Intuit OAuth Service URLs - URLs to use to access Intuit OAuth Services. Request token URL - Request token endpoint to retrieve request token and secret Access token URL - Access token endpoint to retrieve access token and secret Authorize URL - To authorize access to the third party app
+* Intuit OAuth Service URLs - URLs to use to access Intuit OAuth Services. 
+* Request token URL - Request token endpoint to retrieve request token and secret 
+* Access token URL - Access token endpoint to retrieve access token and secret
+* Authorize URL - To authorize access to the third party app
+
+</p>
+<p>
 
 This is not a seed project to be taken cart blanche and deployed to your production environment. Certain concerns are not addressed at all in our samples (e.g. security, privacy, scalability). In our sample apps, we strive to strike a balance between clarity, maintainability, and performance where we can. However, clarity is ultimately the most important quality in a sample app.
 
