@@ -28,7 +28,7 @@ This is not a seed project to be taken cart blanche and deployed to your product
 4. An app on developer.intuit.com and the associated app token, consumer key, and consumer secret.
 
 ## Configuration
-![Alt text](images/config.jpg "Configurations")
+![Alt text](images/config.JPG "Configurations")
 
 ## First Use Instructions:
 
