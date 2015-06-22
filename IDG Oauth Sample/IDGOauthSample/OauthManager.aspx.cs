@@ -5,11 +5,12 @@
  * which accompanies this distribution, and is available at
  * http://www.opensource.org/licenses/eclipse-1.0.php
  * Contributors:
- *
+ *    Author : Keneally, Jarred
  *    Intuit Developer Group - initial contribution 
  *
  */
 
+#region <<Namespace>>
 using System;
 using System.Configuration;
 using System.Web;
@@ -17,32 +18,34 @@ using DevDefined.OAuth.Consumer;
 using DevDefined.OAuth.Framework;
 using DevDefined.OAuth.Provider;
 using DevDefined.OAuth.Storage.Basic;
-
-
+#endregion
+//
 namespace IDGOauthSample
 {
     public partial class OauthManager : System.Web.UI.Page
     {
-        public static String REQUEST_TOKEN_URL = "https://oauth.intuit.com/oauth/v1/get_request_token";
-        public static String ACCESS_TOKEN_URL = "https://oauth.intuit.com/oauth/v1/get_access_token";
-        public static String AUTHORIZE_URL = "https://appcenter.intuit.com/connect/begin";
-        public static String OAUTH_URL = "https://oauth.intuit.com/oauth/v1";
-        public String consumerKey = "qyprd1DKC9998700XCyUsXtgErgCgC";
-        public String consumerSecret = "MLUPfmvY7sTcjZs66mMEu4vvMmoZQQAG52VgzYPF";
-        public string strrequestToken = "";
-        public string tokenSecret = "";
+        #region <<App Properties >>
+        public static String REQUEST_TOKEN_URL = ConfigurationManager.AppSettings["GET_REQUEST_TOKEN"];
+        public static String ACCESS_TOKEN_URL = ConfigurationManager.AppSettings["GET_ACCESS_TOKEN"];
+        public static String AUTHORIZE_URL = ConfigurationManager.AppSettings["AuthorizeUrl"];
+        public static String OAUTH_URL = ConfigurationManager.AppSettings["OauthLink"];
+        public String consumerKey = ConfigurationManager.AppSettings["ConsumerKey"];
+        public String consumerSecret = ConfigurationManager.AppSettings["ConsumerSecret"];
+        public string strrequestToken = string.Empty;
+        public string tokenSecret = string.Empty;
         public string oauth_callback_url = "http://localhost:65281/OauthManager.aspx?";
         public string GrantUrl = "http://localhost:65281/OauthManager.aspx";
-
-
+        #endregion
+        /// <summary>
+        /// Page Load with initialization of properties.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         protected void Page_Load(object sender, EventArgs e)
         {
-
-
             if (Request.QueryString.HasKeys())
             {
                 //Get Access Tokens
-                
                 HttpContext.Current.Session["oauthToken"] = Request.QueryString["oauth_token"].ToString(); ;
                 HttpContext.Current.Session["oauthVerifyer"] = Request.QueryString["oauth_verifier"].ToString(); 
                 HttpContext.Current.Session["realm"] = Request.QueryString["realmId"].ToString(); 
@@ -50,8 +53,6 @@ namespace IDGOauthSample
                 //Stored in a session for demo purposes.
                 //Production applications should securely store the Access Token
                 getAccessToken();
-                
-
             }
             else if ((HttpContext.Current.Session["oauthLink"] != null || Request.UrlReferrer != null) && HttpContext.Current.Session["accessToken"] == null && HttpContext.Current.Session["accessTokenSecret"]  == null)
             {
@@ -76,46 +77,32 @@ namespace IDGOauthSample
                 {
                     c2qb.Visible = false;
                     disconnect.Visible = true;
-
                 }
-
             }
-
-
-
-
-
-
-
-
-
-
         }
-
-
+        //
+        #region <<Routines>>
+        /// <summary>
+        /// Get request token
+        /// </summary>
         public void GetRequestToken()
         {
             //Remember these for later.
             HttpContext.Current.Session["consumerKey"] = consumerKey;
             HttpContext.Current.Session["consumerSecret"] = consumerSecret;
-            //HttpContext.Current.Session["oauthLink"] 
-
             IOAuthSession session = CreateSession();
             IToken requestToken = session.GetRequestToken();
             HttpContext.Current.Session["requestToken"] = strrequestToken;
             strrequestToken = requestToken.Token;
             tokenSecret = requestToken.TokenSecret;
-
-            //string authURL = GetAuthorizeURL(RequestToken);
-            string authUrl = AUTHORIZE_URL + "?oauth_token=" + strrequestToken + "&oauth_callback=" +
-                             UriUtility.UrlEncode(oauth_callback_url);
-            //hypAuthToken.NavigateUrl = authURL;
-            //hypAuthToken.Text = authURL;
+            var authUrl = string.Format("{0}?oauth_token={1}&oauth_callback={2}", AUTHORIZE_URL, strrequestToken, UriUtility.UrlEncode(oauth_callback_url));
             HttpContext.Current.Session["oauthLink"] = authUrl;
             Response.Redirect(authUrl);
         }
-
-
+        /// <summary>
+        /// Create a session.
+        /// </summary>
+        /// <returns></returns>
         protected IOAuthSession CreateSession()
         {
             var consumerContext = new OAuthConsumerContext
@@ -130,50 +117,51 @@ namespace IDGOauthSample
                                     HttpContext.Current.Session["oauthLink"].ToString(),
                                     ACCESS_TOKEN_URL);
         }
+        /// <summary>
+        /// Get Access token.
+        /// </summary>
         private void getAccessToken()
         {
             IOAuthSession clientSession = CreateSession();
             IToken accessToken = clientSession.ExchangeRequestTokenForAccessToken((IToken)HttpContext.Current.Session["requestToken"], HttpContext.Current.Session["oauthVerifyer"].ToString());
             HttpContext.Current.Session["accessToken"] = accessToken.Token;
             HttpContext.Current.Session["accessTokenSecret"] = accessToken.TokenSecret;
-
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
         protected void CreateAuthorization()
         {
             //Remember these for later.
             HttpContext.Current.Session["consumerKey"] = consumerKey;
             HttpContext.Current.Session["consumerSecret"] = consumerSecret;
             HttpContext.Current.Session["oauthLink"] = OAUTH_URL;
-
+            //
             IOAuthSession session = CreateSession();
             IToken requestToken = session.GetRequestToken();
             HttpContext.Current.Session["requestToken"] = requestToken;
             tokenSecret = requestToken.TokenSecret;
-
-            //string authURL = GetAuthorizeURL(RequestToken);
-            string authUrl = AUTHORIZE_URL + "?oauth_token=" + requestToken.Token + "&oauth_callback=" +
-                             UriUtility.UrlEncode(oauth_callback_url);
-            //hypAuthToken.NavigateUrl = authURL;
-            //hypAuthToken.Text = authURL;
+            var authUrl = string.Format("{0}?oauth_token={1}&oauth_callback={2}", AUTHORIZE_URL, requestToken.Token, UriUtility.UrlEncode(oauth_callback_url));
             HttpContext.Current.Session["oauthLink"] = authUrl;
             Response.Redirect(authUrl);
-
         }
-
+        #endregion
+        /// <summary>
+        /// Disconnect and call Session_End event of the page life cycle 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         protected void btnDisconnect_Click(object sender, EventArgs e)
         {
             //Clearing all session data
-            Session.Clear();
-            Session.Abandon();
-            HttpContext.Current.Session["accessToken"] = null;
-            HttpContext.Current.Session["accessTokenSecret"] = null;
-            HttpContext.Current.Session["realm"] = null;
-            HttpContext.Current.Session["dataSource"] = null;
-            
-            disconnect.Visible = false;
-            lblDisconnect.Visible = true;
-
+            try
+            {
+                Session.Abandon();
+            }
+            catch (Exception ex)
+            {
+                Response.Write(ex.InnerException);
+            }
         }
     }
 }

@@ -9,3 +9,8 @@ C:\Users\nshrivastava\Desktop\IDG Oauth Sample\IDG Oauth Sample\IDGOauthSample\b
 C:\Users\nshrivastava\Desktop\IDG Oauth Sample\IDG Oauth Sample\IDGOauthSample\bin\IDGOauthSample.pdb
 C:\Users\nshrivastava\Desktop\IDG Oauth Sample\IDG Oauth Sample\IDGOauthSample\obj\Debug\IDGOauthSample.dll
 C:\Users\nshrivastava\Desktop\IDG Oauth Sample\IDG Oauth Sample\IDGOauthSample\obj\Debug\IDGOauthSample.pdb
+C:\Users\smadhavan\Source\Repos\oauth-dotnet\IDG Oauth Sample\IDGOauthSample\bin\IDGOauthSample.dll.config
+C:\Users\smadhavan\Source\Repos\oauth-dotnet\IDG Oauth Sample\IDGOauthSample\bin\IDGOauthSample.dll
+C:\Users\smadhavan\Source\Repos\oauth-dotnet\IDG Oauth Sample\IDGOauthSample\bin\IDGOauthSample.pdb
+C:\Users\smadhavan\Source\Repos\oauth-dotnet\IDG Oauth Sample\IDGOauthSample\obj\Debug\IDGOauthSample.dll
+C:\Users\smadhavan\Source\Repos\oauth-dotnet\IDG Oauth Sample\IDGOauthSample\obj\Debug\IDGOauthSample.pdb
