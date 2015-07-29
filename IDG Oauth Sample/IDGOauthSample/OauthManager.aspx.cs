@@ -156,7 +156,14 @@ namespace IDGOauthSample
             //Clearing all session data
             try
             {
+                Session.Clear();
                 Session.Abandon();
+                HttpContext.Current.Session["accessToken"] = null;
+                HttpContext.Current.Session["accessTokenSecret"] = null;
+                HttpContext.Current.Session["realm"] = null;
+                HttpContext.Current.Session["dataSource"] = null;
+                disconnect.Visible = false;
+                lblDisconnect.Visible = true;
             }
             catch (Exception ex)
             {
