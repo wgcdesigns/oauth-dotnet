@@ -34,7 +34,8 @@ namespace IDGOauthSample
         public string strrequestToken = string.Empty;
         public string tokenSecret = string.Empty;
         public string oauth_callback_url = "http://localhost:65281/OauthManager.aspx?";
-        public string GrantUrl = "http://localhost:65281/OauthManager.aspx";
+        public string GrantUrl = "http://localhost:65281/OauthManager.aspx?connect=true";
+        //public string GrantUrl = string.Empty;
         #endregion
         /// <summary>
         /// Page Load with initialization of properties.
@@ -45,24 +46,44 @@ namespace IDGOauthSample
         {
             if (Request.QueryString.HasKeys())
             {
-                //Get Access Tokens
-                HttpContext.Current.Session["oauthToken"] = Request.QueryString["oauth_token"].ToString(); ;
-                HttpContext.Current.Session["oauthVerifyer"] = Request.QueryString["oauth_verifier"].ToString(); 
-                HttpContext.Current.Session["realm"] = Request.QueryString["realmId"].ToString(); 
-                HttpContext.Current.Session["dataSource"] = Request.QueryString["dataSource"].ToString();
-                //Stored in a session for demo purposes.
-                //Production applications should securely store the Access Token
-                getAccessToken();
+                if ((Request.QueryString["connect"] != null))
+                {
+                    if (Request.QueryString["connect"].ToString() == "false")
+                    {
+                        GetToken();
+                    }
+                    else
+                    {
+                        HttpContext.Current.Session["consumerKey"] = consumerKey;
+                        HttpContext.Current.Session["consumerSecret"] = consumerSecret;
+                        CreateAuthorization();
+                        IToken token = (IToken)HttpContext.Current.Session["requestToken"];
+                        tokenSecret = token.TokenSecret;
+                        strrequestToken = token.Token;
+                    }
+                }
+                else
+                {
+                    GetToken();
+                }
             }
-            else if ((HttpContext.Current.Session["oauthLink"] != null || Request.UrlReferrer != null) && HttpContext.Current.Session["accessToken"] == null && HttpContext.Current.Session["accessTokenSecret"]  == null)
+            else if (Request.QueryString.HasKeys())
             {
-                HttpContext.Current.Session["consumerKey"] = consumerKey;
-                HttpContext.Current.Session["consumerSecret"] = consumerSecret;
-                CreateAuthorization();
-                IToken token = (IToken)HttpContext.Current.Session["requestToken"];
-                tokenSecret = token.TokenSecret;
-                strrequestToken = token.Token; 
-               
+
+                if (Request.QueryString["connect"].ToString() == "true")
+                {
+
+                    if ((HttpContext.Current.Session["oauthLink"] != null || Request.UrlReferrer != null) && HttpContext.Current.Session["accessToken"] == null && HttpContext.Current.Session["accessTokenSecret"] == null)
+                    {
+                        HttpContext.Current.Session["consumerKey"] = consumerKey;
+                        HttpContext.Current.Session["consumerSecret"] = consumerSecret;
+                        CreateAuthorization();
+                        IToken token = (IToken)HttpContext.Current.Session["requestToken"];
+                        tokenSecret = token.TokenSecret;
+                        strrequestToken = token.Token;
+
+                    }
+                }
             }
             else
             {
@@ -75,10 +96,23 @@ namespace IDGOauthSample
                 }
                 else
                 {
+                    
                     c2qb.Visible = false;
                     disconnect.Visible = true;
+                    //Disconnect();
                 }
             }
+        }
+
+        private void GetToken()
+        {
+            HttpContext.Current.Session["oauthToken"] = Request.QueryString["oauth_token"].ToString(); ;
+            HttpContext.Current.Session["oauthVerifyer"] = Request.QueryString["oauth_verifier"].ToString();
+            HttpContext.Current.Session["realm"] = Request.QueryString["realmId"].ToString();
+            HttpContext.Current.Session["dataSource"] = Request.QueryString["dataSource"].ToString();
+            //Stored in a session for demo purposes.
+            //Production applications should securely store the Access Token
+            getAccessToken();
         }
         //
         #region <<Routines>>
@@ -154,6 +188,11 @@ namespace IDGOauthSample
         protected void btnDisconnect_Click(object sender, EventArgs e)
         {
             //Clearing all session data
+            Disconnect();
+        }
+
+        private void Disconnect()
+        {
             try
             {
                 Session.Clear();
