@@ -18,6 +18,7 @@ using DevDefined.OAuth.Consumer;
 using DevDefined.OAuth.Framework;
 using DevDefined.OAuth.Provider;
 using DevDefined.OAuth.Storage.Basic;
+using System.Collections.Generic;
 #endregion
 //
 namespace IDGOauthSample
@@ -44,50 +45,20 @@ namespace IDGOauthSample
         /// <param name="e"></param>
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Request.QueryString.HasKeys())
+            if (Request.QueryString.Count > 0)
             {
-                if ((Request.QueryString["connect"] != null))
+                List<string> queryKeys = new List<string>(Request.QueryString.AllKeys);
+                if (queryKeys.Contains("connect"))
                 {
-                    if (Request.QueryString["connect"].ToString() == "false")
-                    {
-                        GetToken();
-                    }
-                    else
-                    {
-                        HttpContext.Current.Session["consumerKey"] = consumerKey;
-                        HttpContext.Current.Session["consumerSecret"] = consumerSecret;
-                        CreateAuthorization();
-                        IToken token = (IToken)HttpContext.Current.Session["requestToken"];
-                        tokenSecret = token.TokenSecret;
-                        strrequestToken = token.Token;
-                    }
+                    FireAuth();
                 }
-                else
+                if (queryKeys.Contains("oauth_token"))
                 {
-                    GetToken();
-                }
-            }
-            else if (Request.QueryString.HasKeys())
-            {
-
-                if (Request.QueryString["connect"].ToString() == "true")
-                {
-
-                    if ((HttpContext.Current.Session["oauthLink"] != null || Request.UrlReferrer != null) && HttpContext.Current.Session["accessToken"] == null && HttpContext.Current.Session["accessTokenSecret"] == null)
-                    {
-                        HttpContext.Current.Session["consumerKey"] = consumerKey;
-                        HttpContext.Current.Session["consumerSecret"] = consumerSecret;
-                        CreateAuthorization();
-                        IToken token = (IToken)HttpContext.Current.Session["requestToken"];
-                        tokenSecret = token.TokenSecret;
-                        strrequestToken = token.Token;
-
-                    }
+                    ReadToken();
                 }
             }
             else
             {
-                //Show Connect to QB Button
                 if (HttpContext.Current.Session["accessToken"] == null && HttpContext.Current.Session["accessTokenSecret"] == null)
                 {
                     c2qb.Visible = true;
@@ -96,15 +67,28 @@ namespace IDGOauthSample
                 }
                 else
                 {
-                    
                     c2qb.Visible = false;
                     disconnect.Visible = true;
                     //Disconnect();
                 }
             }
         }
-
-        private void GetToken()
+        /// <summary>
+        /// Initiate the ouath screen.
+        /// </summary>
+        private void FireAuth()
+        {
+            HttpContext.Current.Session["consumerKey"] = consumerKey;
+            HttpContext.Current.Session["consumerSecret"] = consumerSecret;
+            CreateAuthorization();
+            IToken token = (IToken)HttpContext.Current.Session["requestToken"];
+            tokenSecret = token.TokenSecret;
+            strrequestToken = token.Token;
+        }
+        /// <summary>
+        /// Read the values from the query string.
+        /// </summary>
+        private void ReadToken()
         {
             HttpContext.Current.Session["oauthToken"] = Request.QueryString["oauth_token"].ToString(); ;
             HttpContext.Current.Session["oauthVerifyer"] = Request.QueryString["oauth_verifier"].ToString();
@@ -116,23 +100,7 @@ namespace IDGOauthSample
         }
         //
         #region <<Routines>>
-        /// <summary>
-        /// Get request token
-        /// </summary>
-        public void GetRequestToken()
-        {
-            //Remember these for later.
-            HttpContext.Current.Session["consumerKey"] = consumerKey;
-            HttpContext.Current.Session["consumerSecret"] = consumerSecret;
-            IOAuthSession session = CreateSession();
-            IToken requestToken = session.GetRequestToken();
-            HttpContext.Current.Session["requestToken"] = strrequestToken;
-            strrequestToken = requestToken.Token;
-            tokenSecret = requestToken.TokenSecret;
-            var authUrl = string.Format("{0}?oauth_token={1}&oauth_callback={2}", AUTHORIZE_URL, strrequestToken, UriUtility.UrlEncode(oauth_callback_url));
-            HttpContext.Current.Session["oauthLink"] = authUrl;
-            Response.Redirect(authUrl);
-        }
+
         /// <summary>
         /// Create a session.
         /// </summary>
@@ -145,7 +113,6 @@ namespace IDGOauthSample
                     ConsumerSecret = HttpContext.Current.Session["consumerSecret"].ToString(),
                     SignatureMethod = SignatureMethod.HmacSha1
                 };
-
             return new OAuthSession(consumerContext,
                                     REQUEST_TOKEN_URL,
                                     HttpContext.Current.Session["oauthLink"].ToString(),
