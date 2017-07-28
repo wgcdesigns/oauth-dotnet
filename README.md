@@ -1,4 +1,4 @@
-#DotNet Sample App for OAuth
+#DotNet Sample App for OAuth1 apps
 =====================================
 <p>
 Welcome to the Intuit Developer's DotNet OAuth Sample App.
