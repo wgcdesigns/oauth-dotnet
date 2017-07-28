@@ -32,8 +32,8 @@ This is not a seed project to be taken cart blanche and deployed to your product
 
 ## Prerequisites
 
-1. Vsiual Studio 2012 or later
-2. .Net framework 4.5
+1. Vsiual Studio 2015 or later
+2. .Net framework 4.6.1
 3. Developer.intuit.com account
 4. An app on developer.intuit.com and the associated app token, consumer key, and consumer secret.
 
